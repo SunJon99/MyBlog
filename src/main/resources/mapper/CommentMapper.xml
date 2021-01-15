@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hut.myblog.dao.CommentMapper">
+
+    <resultMap id="commentMap" type="comment">
+        <result property="id" column="id"/>
+        <result property="nickname" column="nickname"/>
+        <result property="email" column="email"/>
+        <result property="content" column="content"/>
+        <result property="avatar" column="avatar"/>
+        <result property="createTime" column="create_time"/>
+        <association property="parentComment" javaType="comment">
+            <result property="id" column="parent_comment_id"/>
+        </association>
+    </resultMap>
+
+    <select id="findByBlogId" parameterType="Long" resultMap="commentMap">
+        SELECT
+               *
+        FROM
+             t_comment
+        WHERE
+              blog_id = #{blogId}
+    </select>
+
+    <select id="findOne" parameterType="Long" resultMap="commentMap">
+        SELECT
+               *
+        FROM
+             t_comment
+        WHERE
+              id = #{commentId}
+    </select>
+    <delete id="delCommentDueBlog">delete from t_comment where blog_id = #{id} </delete>
+
+    <insert id="save">
+        INSERT INTO
+            blog.t_comment(nickname,           email,           content,           avatar,           create_time,           blog_id,            parent_comment_id)
+        VALUE
+                (#{comment.nickname},#{comment.email},#{comment.content},#{comment.avatar},#{comment.createTime},#{comment.blog.id},#{comment.parentComment.id})
+    </insert>
+
+</mapper>

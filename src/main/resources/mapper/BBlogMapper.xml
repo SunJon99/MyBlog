@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--映射器 映射器的作用： 1. 将实体类与数据库中表相关联 2. 执行 SQL 语句 -->
+<mapper namespace="com.hut.myblog.dao.BBlogMapper">
+
+    <resultMap id="BlogMap" type="BBlog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="flag" column="flag"/>
+        <result property="views" column="views"/>
+        <result property="appreciation" column="appreciation"/>
+        <result property="share" column="share_statement"/>
+        <result property="commentable" column="commentabled"/>
+        <result property="published" column="published"/>
+        <result property="recommend" column="recommend"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="type" column="type_id"/>
+        <result property="author" column="user_id"/>
+        <result property="description" column="description"/>
+        <result property="tags" column="tag_ids"/>
+    </resultMap>
+
+    <select id="getByID" resultMap="BlogMap">
+        select
+            id,
+            title,
+            content,
+            first_picture,
+            flag,
+            views,
+            appreciation,
+            share_statement,
+            commentabled,
+            published,
+            recommend,
+            create_time,
+            update_time,
+            type_id,
+            user_id,
+            description,
+            tag_ids
+        from t_blog
+        where id = #{id}
+    </select>
+
+    <select id="getByType" resultMap="BlogMap">
+        select
+            id,
+            title,
+            content,
+            first_picture,
+            flag,
+            views,
+            appreciation,
+            share_statement,
+            commentabled,
+            published,
+            recommend,
+            create_time,
+            update_time,
+            type_id,
+            user_id,
+            description,
+            tag_ids
+        from t_blog
+        where type_id = #{tID}
+    </select>
+
+    <select id="getByTitle" resultMap="BlogMap">
+        select
+             id,
+            title,
+            content,
+            first_picture,
+            flag,
+            views,
+            appreciation,
+            share_statement,
+            commentabled,
+            published,
+            recommend,
+            create_time,
+            update_time,
+            type_id,
+            user_id,
+            description,
+            tag_ids
+        from t_blog
+        where title like "%"#{title}"%"
+    </select>
+
+    <select id="getAll" resultMap="BlogMap">
+        select
+             id,
+            title,
+            content,
+            first_picture,
+            flag,
+            views,
+            appreciation,
+            share_statement,
+            commentabled,
+            published,
+            recommend,
+            create_time,
+            update_time,
+            type_id,
+            user_id,
+            description,
+            tag_ids
+        from t_blog
+    </select>
+
+    <select id="getSomeByConditions" resultMap="BlogMap">
+        select
+            id,
+            title,
+            content,
+            first_picture,
+            flag,
+            views,
+            appreciation,
+            share_statement,
+            commentabled,
+            published,
+            recommend,
+            create_time,
+            update_time,
+            type_id,
+            user_id,
+            description,
+            tag_ids
+        from t_blog
+        <where>
+            recommend >= #{recommend}
+            <if test="type != null">
+                and type_id = #{type}
+            </if>
+            <if test="title != null">
+                and title like "%"#{title}"%"
+            </if>
+        </where>
+    </select>
+
+<!--    删除一个博文-->
+    <delete id="delByID">
+        delete from t_blog where id = #{id};
+    </delete>
+
+<!--    添加文章-->
+    <insert id="addOne" parameterType="BBlog">
+        insert into t_blog
+        (title,content,first_picture,flag,appreciation,share_statement,
+        commentabled,published,recommend,create_time,update_time,type_id,
+        user_id,description,tag_ids)
+        value
+        (#{title},
+        #{content},
+        #{firstPicture},
+        #{flag},
+        #{appreciation},
+        #{share},
+        #{commentable},
+        #{published},
+        #{recommend},
+        now(),
+        now(),
+        #{type},
+        #{author},
+        #{description},
+        #{tags}
+        )
+    </insert>
+
+    <update id="setOne" parameterType="BBlog">
+        update t_blog
+        set title=#{title},
+            content=#{content},
+            first_picture=#{firstPicture},
+            flag=#{flag},
+            appreciation=#{appreciation},
+            share_statement=#{share},
+            commentabled=#{commentable},
+            recommend=#{recommend},
+            update_time=now(),
+            type_id=#{type},
+            description=#{description},
+            tag_ids=#{tags},
+            published=#{published}
+        where id = #{id}
+    </update>
+
+</mapper>

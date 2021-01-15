@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hut.myblog.dao.BlogMapper">
+
+    <resultMap id="show" type="Blog">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="createTime" column="create_time"/>
+        <result column="views" property="views"/>
+        <association property="user" javaType="user">
+            <result property="username" column="username"/>
+        </association>
+        <association property="type" javaType="type">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+        </association>
+        <association property="tag" javaType="tag">
+            <id property="id" column="id"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+
+    
+    <select id="getCountBlog" resultType="int">
+        select count(*) from t_blog
+    </select>
+    <select id="getCountBlogByType" resultType="int">
+        select
+            count(*)
+        from
+            t_blog as b
+        where
+            b.type_id=#{id}
+    </select>
+
+    <select id="getBlogByType" resultMap="show">
+        SELECT
+            b.id,title,description,first_picture,u.username,b.create_time,views,t.name
+        from
+            t_blog as b
+        INNER JOIN
+            t_user as u
+        on
+            b.user_id=u.id
+        inner join
+            t_tag as t
+        on
+            b.tag_ids=t.id
+        where
+            b.type_id=#{id}
+    </select>
+    <select id="getAll"  resultMap="show">
+    select
+    *
+    from
+    blog.t_blog
+    </select>
+    <select id="getRecommend"  resultMap="show">
+    select
+    *
+    from
+    blog.t_blog
+    where
+    recommend =1;
+    </select>
+
+
+    <select id="getBlogById" parameterType="Long" resultType="blog">
+    SELECT
+    *
+    FROM
+    t_blog
+    WHERE
+    id = #{id}
+    </select>
+
+
+    <select id="getBlogCount" resultType="Integer">
+    select count(*) from blog.t_blog
+    </select>
+
+
+    <select id="getBlogByYear" resultMap="show">
+    select
+    *
+    from
+    blog.t_blog b
+    where
+    DATE_FORMAT(b.create_time,'%Y') = #{year}
+    ORDER BY
+    create_time DESC
+    </select>
+    <select id="getBlogBySearch" resultMap="show">
+        SELECT
+            b.id,title,description,first_picture,u.username,b.create_time,views,t.name
+        from
+            t_blog as b
+        INNER JOIN
+            t_user as u
+        on
+            b.user_id=u.id
+        inner join
+            t_tag as t
+        on
+            b.tag_ids=t.id
+        where b.title like "%"#{title}"%" or b.content like "%"#{content}"%"
+    </select>
+    <select id="getBlogByTag" resultMap="show">
+       SELECT
+            b.id,title,description,first_picture,u.username,b.create_time,views,t.name
+        from
+            t_blog as b
+        INNER JOIN
+            t_user as u
+        on
+            b.user_id=u.id
+        inner join
+            t_tag as t
+        on
+            b.tag_ids=t.id
+        where
+           b.tag_ids=#{id}
+    </select>
+    <select id="getGroupYear" resultType="String">
+    SELECT
+    DATE_FORMAT(b.create_time,'%Y') as year
+    FROM
+    t_blog as b
+    GROUP BY
+    year
+    ORDER BY
+    year desc
+    </select>
+    <select id="getCountBlogByTag" resultType="int">
+        select
+            count(*)
+        from
+            t_blog as b
+        where
+            b.tag_ids=#{id}
+    </select>
+
+    <select id="showBlog" resultMap="show">
+        SELECT
+            b.id,title,description,first_picture,u.username,b.create_time,views,t.name
+        from
+            t_blog as b
+        INNER JOIN
+            t_user as u
+        on
+            b.user_id=u.id
+        inner join
+            t_tag as t
+        on
+            b.tag_ids=t.id
+    </select>
+    <select id="showNew" resultMap="show">
+        select b.title,b.id
+        from t_blog as b
+        order by update_time desc
+        limit 3
+    </select>
+    <update id="updateview" >
+        update
+        t_blog
+        set
+        views = views +1
+        where
+        id=#{id}
+    </update>
+</mapper>

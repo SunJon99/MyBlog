@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--映射器 映射器的作用： 1. 将实体类与数据库中表相关联 2. 执行 SQL 语句 -->
+<mapper namespace="com.hut.myblog.dao.BlogTagMapper">
+
+
+    <!--    删除一个博文-->
+    <delete id="delDueBlog">
+        delete from t_blog_tags where blog_id = #{id};
+    </delete>
+
+    <select id="getSomeByBlog" resultType="Tag">
+        select id,name
+        from t_tag
+        where id in(
+            select tag_id from t_blog_tags
+            where blog_id = #{id}
+        )
+    </select>
+
+    <update id="setOne" parameterType="BlogTag">
+        update t_blog_tags
+            set tag_id = #{tID}
+        where blog_id = #{bID}
+    </update>
+
+    <insert id="addOne" parameterType="BlogTag">
+        insert into t_blog_tags(blog_id,tag_id)
+        value
+        (#{bID},#{tID})
+    </insert>
+
+</mapper>
